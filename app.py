@@ -22,6 +22,17 @@ tavily = TavilyClient(
     api_key=tavily_key
 )
 
+
+def get_chat_content(response):
+    try:
+        return response.choices[0].message.content
+    except Exception:
+        try:
+            return response["choices"][0]["message"]["content"]
+        except Exception:
+            return ""
+
+
 st.title("🌍 NGO Research Assistant")
 
 query = st.text_input("Ask anything about NGOs...")
@@ -32,15 +43,16 @@ if st.button("Search"):
         search_result = tavily.search(query)
 
         # Step 2: Generate answer
-        answer = client.chat.completions.create(
+        answer_resp = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
                {"role": "user", "content": f"Summarize:\n{search_result}"}
             ],
-        ).choices[0].message.content
+        )
+        answer = get_chat_content(answer_resp)
 
         # Step 3: Judge (evaluation)
-        evaluation = client.chat.completions.create(
+        evaluation_resp = client.chat.completions.create(
             model="deepseek/deepseek-chat",
             messages=[
                 {
@@ -58,7 +70,8 @@ Answer:
 """
                 }
             ],
-        ).choices[0].message.content
+        )
+        evaluation = get_chat_content(evaluation_resp)
 
         # UI output
         st.subheader("📊 Answer")
