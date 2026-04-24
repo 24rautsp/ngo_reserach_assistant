@@ -68,24 +68,31 @@ if st.button("Search"):
         search_result = tavily.search(query)
 
         # Step 2: Generate answer
-        answer_resp = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-               {"role": "user", "content": f"Summarize:\n{search_result}"}
-            ],
-        )
+        try:
+            answer_resp = client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                   {"role": "user", "content": f"Summarize:\n{search_result}"}
+                ],
+            )
+        except Exception as e:
+            st.error("API request failed while generating the answer.")
+            st.exception(e)
+            st.stop()
+
         answer = get_chat_content(answer_resp)
         if not answer:
             st.warning("No answer content was returned by the API.")
             st.write(answer_resp)
 
         # Step 3: Judge (evaluation)
-        evaluation_resp = client.chat.completions.create(
-            model="deepseek/deepseek-chat",
-            messages=[
-                {
-                    "role": "user",
-                    "content": f"""
+        try:
+            evaluation_resp = client.chat.completions.create(
+                model="deepseek/deepseek-chat",
+                messages=[
+                    {
+                        "role": "user",
+                        "content": f"""
 Evaluate this answer on:
 - Accuracy
 - Clarity
@@ -96,9 +103,14 @@ Give score out of 10 and short feedback.
 Answer:
 {answer}
 """
-                }
-            ],
-        )
+                    }
+                ],
+            )
+        except Exception as e:
+            st.error("API request failed while generating the evaluation.")
+            st.exception(e)
+            st.stop()
+
         evaluation = get_chat_content(evaluation_resp)
 
         # UI output
