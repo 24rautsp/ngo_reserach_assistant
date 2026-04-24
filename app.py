@@ -2,19 +2,24 @@ import streamlit as st
 from openai import OpenAI
 from tavily import TavilyClient
 
-st.write("Has OPENROUTER key:", "OPENROUTER_API_KEY" in st.secrets)
-st.write("Has TAVILY key:", "TAVILY_API_KEY" in st.secrets)
+openrouter_key = st.secrets.get("OPENROUTER_API_KEY")
+tavily_key = st.secrets.get("TAVILY_API_KEY")
+
+if not openrouter_key or not tavily_key:
+    st.error("Missing OPENROUTER_API_KEY or TAVILY_API_KEY in Streamlit secrets.")
+    st.info("Add them under Manage app → Secrets before running the app.")
+    st.stop()
+
+st.write("Has OPENROUTER key:", bool(openrouter_key))
+st.write("Has TAVILY key:", bool(tavily_key))
+
 client = OpenAI(
-    base_url="https://openrouter.ai/api/v1",
-    api_key=st.secrets["OPENROUTER_API_KEY"],
-    default_headers={
-        "HTTP-Referer": "https://your-app-name.streamlit.app",
-        "X-Title": "NGO Research Assistant"
-    }
+    base_url="https://openrouter.ai/v1",
+    api_key=openrouter_key,
 )
 
 tavily = TavilyClient(
-    api_key=st.secrets["TAVILY_API_KEY"]
+    api_key=tavily_key
 )
 
 st.title("🌍 NGO Research Assistant")
@@ -28,7 +33,7 @@ if st.button("Search"):
 
         # Step 2: Generate answer
         answer = client.chat.completions.create(
-            model="openai/gpt-3.5-turbo",
+            model="gpt-3.5-turbo",
             messages=[
                {"role": "user", "content": f"Summarize:\n{search_result}"}
             ],
