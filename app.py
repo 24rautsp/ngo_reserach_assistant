@@ -24,13 +24,38 @@ tavily = TavilyClient(
 
 
 def get_chat_content(response):
-    try:
-        return response.choices[0].message.content
-    except Exception:
-        try:
-            return response["choices"][0]["message"]["content"]
-        except Exception:
+    def extract_text(item):
+        if item is None:
             return ""
+        if isinstance(item, str):
+            return item
+        if isinstance(item, dict):
+            return (
+                item.get("content")
+                or item.get("text")
+                or extract_text(item.get("message"))
+                or extract_text(item.get("delta"))
+            )
+        if hasattr(item, "content"):
+            return item.content or ""
+        if hasattr(item, "text"):
+            return item.text or ""
+        if hasattr(item, "message"):
+            return extract_text(item.message)
+        if hasattr(item, "delta"):
+            return extract_text(item.delta)
+        return ""
+
+    choices = []
+    if hasattr(response, "choices"):
+        choices = response.choices
+    elif isinstance(response, dict):
+        choices = response.get("choices", [])
+
+    if not choices:
+        return ""
+
+    return extract_text(choices[0])
 
 
 st.title("🌍 NGO Research Assistant")
@@ -50,6 +75,9 @@ if st.button("Search"):
             ],
         )
         answer = get_chat_content(answer_resp)
+        if not answer:
+            st.warning("No answer content was returned by the API.")
+            st.write(answer_resp)
 
         # Step 3: Judge (evaluation)
         evaluation_resp = client.chat.completions.create(
