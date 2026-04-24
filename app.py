@@ -2,8 +2,6 @@ import streamlit as st
 from openai import OpenAI
 from tavily import TavilyClient
 
-import streamlit as st
-
 st.write("Has OPENROUTER key:", "OPENROUTER_API_KEY" in st.secrets)
 st.write("Has TAVILY key:", "TAVILY_API_KEY" in st.secrets)
 client = OpenAI(
@@ -26,9 +24,9 @@ if st.button("Search"):
 
         # Step 2: Generate answer
         answer = client.chat.completions.create(
-            model="deepseek/deepseek-chat",
+            model="openai/gpt-3.5-turbo",
             messages=[
-                {"role": "user", "content": f"Answer clearly:\n{search_result}"}
+               {"role": "user", "content": f"Summarize:\n{search_result}"}
             ],
         ).choices[0].message.content
 
