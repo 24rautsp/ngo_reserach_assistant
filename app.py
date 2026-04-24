@@ -14,7 +14,7 @@ st.write("Has OPENROUTER key:", bool(openrouter_key))
 st.write("Has TAVILY key:", bool(tavily_key))
 
 client = OpenAI(
-    base_url="https://openrouter.ai/v1",
+    base_url="https://openrouter.ai/api/v1",
     api_key=openrouter_key,
 )
 
