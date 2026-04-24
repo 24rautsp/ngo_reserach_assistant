@@ -2,6 +2,37 @@
 
 A Streamlit-based AI-powered research tool that helps users discover and learn about NGOs worldwide. The app combines web search capabilities with AI analysis to provide comprehensive NGO information and quality evaluations.
 
+## Architecture Overview
+
+```mermaid
+graph TD
+    A[👤 User] --> B[Streamlit UI]
+    B --> C{Query Input}
+    C --> D[Tavily Search API]
+    D --> E[Web Results]
+    E --> F[OpenRouter GPT-3.5-Turbo]
+    F --> G[AI Summary]
+    G --> H[OpenRouter DeepSeek]
+    H --> I[Quality Evaluation]
+    I --> J[Results Display]
+
+    B --> K[Secrets Management]
+    K --> L[OPENROUTER_API_KEY]
+    K --> M[TAVILY_API_KEY]
+
+    style B fill:#e1f5fe
+    style D fill:#f3e5f5
+    style F fill:#e8f5e8
+    style H fill:#fff3e0
+```
+
+**Architecture Components:**
+- **Frontend**: Streamlit web interface for user interaction
+- **Search Layer**: Tavily API for real-time web search
+- **AI Processing**: OpenRouter API with GPT-3.5-Turbo for summarization and DeepSeek for evaluation
+- **Security**: Streamlit secrets management for API keys
+- **Data Flow**: 3-step pipeline (Search → Summarize → Evaluate)
+
 ## Features
 
 - **Web Search Integration**: Real-time search using Tavily API for current NGO information
