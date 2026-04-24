@@ -67,6 +67,19 @@ if st.button("Search"):
         # Step 1: Search
         search_result = tavily.search(query)
 
+        # Display raw search results with links
+        st.subheader("📚 Search Results")
+        if isinstance(search_result, dict) and "results" in search_result:
+            for idx, result in enumerate(search_result["results"][:5], 1):
+                title = result.get("title", "No title")
+                url = result.get("url", "#")
+                content = result.get("content", "No content")[:200]
+                st.write(f"**{idx}. [{title}]({url})**")
+                st.write(content + "...")
+                st.divider()
+        else:
+            st.write(search_result)
+
         # Step 2: Generate answer
         try:
             answer_resp = client.chat.completions.create(
