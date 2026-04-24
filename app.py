@@ -8,10 +8,12 @@ load_dotenv()
 
 client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
-    api_key=os.getenv("OPENROUTER_API_KEY"),
+    api_key=st.secrets["OPENROUTER_API_KEY"],
 )
 
-tavily = TavilyClient(api_key=os.getenv("TAVILY_API_KEY"))
+tavily = TavilyClient(
+    api_key=st.secrets["TAVILY_API_KEY"]
+)
 
 st.title("🌍 NGO Research Assistant")
 
