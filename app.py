@@ -2,7 +2,10 @@ import streamlit as st
 from openai import OpenAI
 from tavily import TavilyClient
 
+import streamlit as st
 
+st.write("Has OPENROUTER key:", "OPENROUTER_API_KEY" in st.secrets)
+st.write("Has TAVILY key:", "TAVILY_API_KEY" in st.secrets)
 client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
     api_key=st.secrets["OPENROUTER_API_KEY"],
