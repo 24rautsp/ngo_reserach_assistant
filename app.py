@@ -7,6 +7,10 @@ st.write("Has TAVILY key:", "TAVILY_API_KEY" in st.secrets)
 client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
     api_key=st.secrets["OPENROUTER_API_KEY"],
+    default_headers={
+        "HTTP-Referer": "https://your-app-name.streamlit.app",
+        "X-Title": "NGO Research Assistant"
+    }
 )
 
 tavily = TavilyClient(
